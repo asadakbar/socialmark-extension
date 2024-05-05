@@ -8,7 +8,7 @@ const handler = async (req, res) => {
 
   console.log("Inside SendPosts background message function")
   console.log("This is the req.body", req.body)
-  const endpointUrl = "http://localhost:3000/api/v1/saved_posts"
+  const endpointUrl = "http://localhost:3000/api/v1/posts"
   const response = await fetch(endpointUrl, {
     method: "POST",
     headers: {
