@@ -84,8 +84,11 @@ function SavedPostsFetcher() {
     );
     const data = [];
     posts.forEach((post) => {
+      const postId = getPostId(post);
       const postContent = extractOptionalText(post, ".entity-result__content-summary", ".entity-result__summary"); 
       const postUrl = getPostUrl(post);
+      const rawPostDate = getDateAndRepostInfo(post);
+      const postDate = getPostDate(post);
       const dateAndRepostInfo = getDateAndRepostInfo(post);
       const mediaUrl = post.querySelectorAll("img")[1]?.currentSrc || "";
       const isMediaVideo = isVideoPost(post);
@@ -109,6 +112,9 @@ function SavedPostsFetcher() {
         postData: {
           postContent,
           postUrl,
+          postId,
+          rawPostDate,
+          postDate,
           dateAndRepostInfo,
           mediaUrl,
           isMediaVideo,
@@ -127,14 +133,34 @@ function SavedPostsFetcher() {
     return data;
   }
 
+  function getPostIdSlug(post) {
+    const postIdSlug = post.querySelector("[data-chameleon-result-urn]").dataset.chameleonResultUrn;
+    return postIdSlug
+  }
+
+  function getPostId(post) {
+    const postIdSlug = getPostIdSlug(post);
+    return postIdSlug.split(":")[3];
+  } 
+
+  function getPostDate(post) {
+    const postId = getPostId(post);
+    const asBinary = BigInt(postId).toString(2);
+    const first41Chars = asBinary.slice(0, 41);
+    const unixTimestamp = parseInt(first41Chars, 2);
+    const dateObject = new Date(unixTimestamp);
+    const humanDateFormat = dateObject.toUTCString()+" (UTC)";
+    return humanDateFormat
+  }
+
   function getDateAndRepostInfo(post) {
     return post.querySelector(".entity-result__primary-subtitle").nextElementSibling?.innerText.trim() || "";
   }
 
   function getPostUrl(post) {
-    const urn = post.querySelector("[data-chameleon-result-urn]").dataset.chameleonResultUrn;
     const baseUrl = "https://www.linkedin.com/feed/update/";
-    return `${baseUrl}${urn}`;
+    const postIdSlug = getPostIdSlug(post);
+    return `${baseUrl}${postIdSlug}`;
   }
 
   function isVideoPost(post) {
