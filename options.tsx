@@ -1,21 +1,13 @@
-import { useStorage } from "@plasmohq/storage/hook"
 import { Storage } from "@plasmohq/storage"
-//import { SecureStorage } from "@plasmohq/storage/secure"
+import { useStorage } from "@plasmohq/storage/hook"
 
 function OptionsIndex() {
-  //const secureStorageInstance = new SecureStorage({
-    //area: "local"
-  //})
   const insecureStorageInstance = new Storage({
     area: "local",
   });
 
-  // secureStorageInstance.setPassword("password")
-
-  const [apiToken, setApiToken] = useStorage({
-    key: "apiToken",
-    instance: insecureStorageInstance,
-  })
+  const [apiToken, setApiToken] = useStorage(
+    "apiToken",  (v) => v === undefined ? "": v)
 
   return (
     <div>
@@ -24,6 +16,7 @@ function OptionsIndex() {
       </h1>
       <h2>This is the Option UI page!</h2>
       <input onChange={(e) => setApiToken(e.target.value)} value={apiToken} />
+      <p>Api Token {apiToken == undefined ? "undefined" : apiToken}</p>
     </div>
   )
 }

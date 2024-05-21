@@ -38,6 +38,9 @@ function IndexPopup() {
         </a>{" "}
         Extension!
       </h2>
+      <p>ApiToken:{
+        apiToken == undefined ? "undefined" : apiToken
+      }</p>
       {apiToken ? (
         <>
           <button onClick={handleScrapePostClick}>Upload Saved Posts</button>
